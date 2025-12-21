@@ -194,7 +194,7 @@ abstract class AbstractReporting
 
             if (! empty($intervals)) {
                 return [
-                    'group_column' => 'MONTH(created_at)',
+                    'group_column' => 'EXTRACT(MONTH FROM created_at)',
                     'intervals'    => $intervals,
                 ];
             }
@@ -206,7 +206,7 @@ abstract class AbstractReporting
 
             if (! empty($intervals)) {
                 return [
-                    'group_column' => 'WEEK(created_at)',
+                    'group_column' => 'EXTRACT(WEEK FROM created_at)',
                     'intervals'    => $intervals,
                 ];
             }
@@ -215,7 +215,7 @@ abstract class AbstractReporting
              * If the difference between the start and end date is less than 6 weeks
              */
             return [
-                'group_column' => 'DAYOFYEAR(created_at)',
+                'group_column' => 'EXTRACT(DOY FROM created_at)',
                 'intervals'    => $this->getDaysInterval($startDate, $endDate),
             ];
         } else {

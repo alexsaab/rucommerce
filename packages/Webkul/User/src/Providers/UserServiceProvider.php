@@ -16,6 +16,10 @@ class UserServiceProvider extends ServiceProvider
     public function register()
     {
         include __DIR__.'/../Http/helpers.php';
+
+        $this->commands([
+            \Webkul\User\Console\Commands\ResetAdminPassword::class,
+        ]);
     }
 
     /**

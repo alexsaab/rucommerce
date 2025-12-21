@@ -484,16 +484,16 @@
                                     <x-installer::form.control-group.control
                                         type="select"
                                         name="db_connection"
-                                        ::value="envData.db_connection ?? 'mysql'"
+                                        ::value="envData.db_connection ?? 'pgsql'"
                                         rules="required"
                                         :label="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                         :placeholder="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                     >
                                         <option
-                                            value="mysql"
+                                            value="pgsql"
                                             selected
                                         >
-                                            @lang('installer::app.installer.index.environment-configuration.mysql')
+                                            @lang('installer::app.installer.index.environment-configuration.pgsql')
                                         </option>
                                     </x-installer::form.control-group.control>
 
@@ -1297,12 +1297,12 @@
                         FormSubmit(params, { setErrors }) {
                             const stepActions = {
                                 envDatabase: () => {
-                                    if (params.db_connection === 'mysql') {
+                                    if (['mysql', 'pgsql'].includes(params.db_connection)) {
                                         this.completeStep('envDatabase', 'readyForInstallation', 'active', 'complete', setErrors);
 
                                         this.envData = { ...this.envData, ...params };
                                     } else {
-                                        setErrors({ 'db_connection': ["Bagisto currently supports MySQL only."] });
+                                        setErrors({ 'db_connection': ["Bagisto currently supports MySQL and PostgreSQL only."] });
                                     }
                                 },
 

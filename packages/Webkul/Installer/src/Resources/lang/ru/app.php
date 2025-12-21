@@ -679,7 +679,7 @@ return [
                 'mauritian-rupee'             => 'Маврикийская рупия (MUR)',
                 'mexican-peso'                => 'Мексиканское песо (MXN)',
                 'moroccan-dirham'             => 'Марокканский дирхам (MAD)',
-                'mysql'                       => 'MySQL',
+                'pgsql'                       => 'Postgres',
                 'nepalese-rupee'              => 'Непальская рупия (NPR)',
                 'new-taiwan-dollar'           => 'Новый тайваньский доллар (TWD)',
                 'new-zealand-dollar'          => 'Новозеландский доллар (NZD)',
