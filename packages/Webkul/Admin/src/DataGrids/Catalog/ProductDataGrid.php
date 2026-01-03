@@ -345,8 +345,14 @@ class ProductDataGrid extends DataGrid
             ->whereIn('product_flat.product_id', $ids);
 
         if ($ids) {
+            $order = 'CASE ' . DB::getTablePrefix() . 'product_flat.product_id ';
+            foreach ($ids as $index => $id) {
+                $order .= "WHEN {$id} THEN {$index} ";
+            }
+            $order .= 'END';
+
             $this->queryBuilder
-                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'product_flat.product_id, '.implode(',', $ids).')'));
+                ->orderByRaw($order);
         }
 
         $total = $results['hits']['total']['value'];

@@ -36,11 +36,15 @@ class UpdateCreatePriceIndex implements ShouldQueue
             return;
         }
 
-        $ids = implode(',', $this->productIds);
+        $order = 'CASE id ';
+        foreach ($this->productIds as $index => $id) {
+            $order .= "WHEN {$id} THEN {$index} ";
+        }
+        $order .= 'END';
 
         $products = app(ProductRepository::class)
             ->whereIn('id', $this->productIds)
-            ->orderByRaw("FIELD(id, $ids)")
+            ->orderByRaw($order)
             ->get();
 
         app(PriceIndexer::class)->reindexRows($products);

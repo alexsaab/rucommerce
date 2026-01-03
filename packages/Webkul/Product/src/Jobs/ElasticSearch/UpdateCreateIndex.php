@@ -32,15 +32,22 @@ class UpdateCreateIndex implements ShouldQueue
      */
     public function handle()
     {
-        if (core()->getConfigData('catalog.products.search.engine') != 'elastic') {
+        if (
+            core()->getConfigData('catalog.products.search.engine') != 'elastic'
+            || ! count($this->productIds)
+        ) {
             return;
         }
 
-        $ids = implode(',', $this->productIds);
+        $order = 'CASE id ';
+        foreach ($this->productIds as $index => $id) {
+            $order .= "WHEN {$id} THEN {$index} ";
+        }
+        $order .= 'END';
 
         $products = app(ProductRepository::class)
             ->whereIn('id', $this->productIds)
-            ->orderByRaw("FIELD(id, $ids)")
+            ->orderByRaw($order)
             ->get();
 
         app(ElasticSearch::class)->reindexRows($products);

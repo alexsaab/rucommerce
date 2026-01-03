@@ -388,8 +388,14 @@ class ProductRepository extends Repository
                                     $paramValues = explode(',', $params[$attribute->code]);
 
                                     $subFilterQuery->where(function ($query) use ($paramValues, $alias, $attribute, $prefix) {
+                                        $driver = DB::connection()->getDriverName();
+
+                                        $rawQuery = ($driver === 'mysql')
+                                            ? "FIND_IN_SET(?, {$prefix}{$alias}.{$attribute->column_name})"
+                                            : "? = ANY(string_to_array({$prefix}{$alias}.{$attribute->column_name}, ','))";
+
                                         foreach ($paramValues as $value) {
-                                            $query->orWhereRaw("FIND_IN_SET(?, {$prefix}{$alias}.{$attribute->column_name})", [$value]);
+                                            $query->orWhereRaw($rawQuery, [$value]);
                                         }
                                     });
                                 } else {
@@ -499,7 +505,13 @@ class ProductRepository extends Repository
                     ->whereNull('product_customizable_options.id');
             }
 
-            $qb->orderBy(DB::raw('FIELD(id, '.implode(',', $indices['ids']).')'));
+            $order = 'CASE id ';
+            foreach ($indices['ids'] as $index => $id) {
+                $order .= "WHEN {$id} THEN {$index} ";
+            }
+            $order .= 'END';
+
+            $qb->orderByRaw($order);
 
             return $qb;
         });
