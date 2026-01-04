@@ -510,6 +510,10 @@ class Product extends Model implements ProductContract
      */
     public function checkInLoadedFamilyAttributes(): object
     {
+        if (! $this->attribute_family) {
+            return collect();
+        }
+
         return core()->getSingletonInstance(AttributeRepository::class)
             ->getFamilyAttributes($this->attribute_family);
     }
