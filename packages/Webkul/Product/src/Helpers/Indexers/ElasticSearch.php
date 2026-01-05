@@ -116,12 +116,52 @@ class ElasticSearch extends AbstractIndexer
     }
 
     /**
+     * Create indices if they don't exist.
+     *
+     * @return void
+     */
+    public function createIndices()
+    {
+        foreach ($this->getChannels() as $channel) {
+            foreach ($channel->locales as $locale) {
+                $this->setChannel($channel)->setLocale($locale);
+
+                $indexName = $this->getIndexName();
+
+                $params = ['index' => $indexName];
+
+                if (ElasticSearchClient::indices()->exists($params)) {
+                    continue;
+                }
+
+                $params['body'] = [
+                    'settings' => [
+                        'number_of_shards'   => 1,
+                        'number_of_replicas' => 0,
+                    ],
+                    'mappings' => [
+                        'properties' => [
+                            'id' => [
+                                'type' => 'integer',
+                            ],
+                        ],
+                    ],
+                ];
+
+                ElasticSearchClient::indices()->create($params);
+            }
+        }
+    }
+
+    /**
      * Reindex every products.
      *
      * @return void
      */
     public function reindexFull()
     {
+        $this->createIndices();
+
         while (true) {
             $paginator = $this->productRepository
                 ->select('products.*')

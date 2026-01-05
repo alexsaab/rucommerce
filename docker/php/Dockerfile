@@ -6,7 +6,7 @@ ARG WWWUSER
 USER root
 
 RUN groupadd --gid $WWWGROUP sail && \
-    useradd -g sail -u $WWWUSER -G root sail
+    useradd -ms /bin/bash -g sail -u $WWWUSER -G root sail
 
 RUN apt-get update && apt-get install -y \
     build-essential \

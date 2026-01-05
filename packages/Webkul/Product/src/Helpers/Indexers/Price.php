@@ -88,7 +88,7 @@ class Price extends AbstractIndexer
     {
         while (true) {
             $paginator = $this->productRepository
-                ->distinct()
+                ->groupBy('products.id')
                 ->select('products.*')
                 ->with([
                     'variants',
