@@ -497,8 +497,7 @@ class ProductRepository extends Repository
             'variants.price_indices',
             'variants.inventory_indices',
         ])->scopeQuery(function ($query) use ($params, $indices) {
-            $qb = $query->distinct()
-                ->select('products.id')
+            $qb = $query->select('products.*')
                 ->whereIn('products.id', $indices['ids']);
 
             if (
