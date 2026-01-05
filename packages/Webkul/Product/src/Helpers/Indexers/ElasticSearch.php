@@ -122,24 +122,17 @@ class ElasticSearch extends AbstractIndexer
      */
     public function createIndices()
     {
-        echo "Starting index creation...\n";
         foreach ($this->getChannels() as $channel) {
-            echo "Channel: " . $channel->code . "\n";
             foreach ($channel->locales as $locale) {
-                echo "Locale: " . $locale->code . "\n";
                 $this->setChannel($channel)->setLocale($locale);
 
                 $indexName = $this->getIndexName();
-                echo "Index Name: " . $indexName . "\n";
 
                 $params = ['index' => $indexName];
 
                 if (ElasticSearchClient::indices()->exists($params)) {
-                    echo "Index already exists.\n";
                     continue;
                 }
-
-                echo "Index does not exist. Creating...\n";
 
                 $params['body'] = [
                     'settings' => [
@@ -156,10 +149,8 @@ class ElasticSearch extends AbstractIndexer
                 ];
 
                 ElasticSearchClient::indices()->create($params);
-                echo "Index created.\n";
             }
         }
-        echo "Index creation finished.\n";
     }
 
     /**

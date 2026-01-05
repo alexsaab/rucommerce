@@ -749,7 +749,7 @@ return [
                 'name'    => 'engine',
                 'title'   => 'admin::app.configuration.index.catalog.products.search.search-engine',
                 'type'    => 'select',
-                'default' => 'database',
+                'default' => 'elastic',
                 'options' => [
                     [
                         'title' => 'admin::app.configuration.index.catalog.products.search.database',
@@ -764,7 +764,7 @@ return [
                 'title'   => 'admin::app.configuration.index.catalog.products.search.admin-mode',
                 'info'    => 'admin::app.configuration.index.catalog.products.search.admin-mode-info',
                 'type'    => 'select',
-                'default' => 'database',
+                'default' => 'elastic',
                 'options' => [
                     [
                         'title' => 'admin::app.configuration.index.catalog.products.search.database',
@@ -779,7 +779,7 @@ return [
                 'title'   => 'admin::app.configuration.index.catalog.products.search.storefront-mode',
                 'info'    => 'admin::app.configuration.index.catalog.products.search.storefront-mode-info',
                 'type'    => 'select',
-                'default' => 'database',
+                'default' => 'elastic',
                 'options' => [
                     [
                         'title' => 'admin::app.configuration.index.catalog.products.search.database',

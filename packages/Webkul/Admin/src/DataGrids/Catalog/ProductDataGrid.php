@@ -39,7 +39,6 @@ class ProductDataGrid extends DataGrid
          * Query Builder to fetch records from `product_flat` table
          */
         $queryBuilder = DB::table('product_flat')
-            ->distinct()
             ->leftJoin('attribute_families as af', 'product_flat.attribute_family_id', '=', 'af.id')
             ->leftJoin('product_inventories', 'product_flat.product_id', '=', 'product_inventories.product_id')
             ->leftJoin('product_images', 'product_flat.product_id', '=', 'product_images.product_id')
