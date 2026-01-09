@@ -21,9 +21,20 @@ export default {
             const target = document.getElementById(binding.arg);
             if (!target) return;
 
-            target.value = e.target.value
+            const transliterationMap = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+                'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+                'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts',
+                'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+            };
+
+            let value = e.target.value
                 .toString()
-                .toLowerCase()
+                .toLowerCase();
+
+            value = value.split('').map(char => transliterationMap[char] || char).join("");
+
+            target.value = value
                 .normalize("NFKD") // Normalize Unicode
                 .replace(/[\u0300-\u036f]/g, "") // Remove combining diacritical marks
                 .replace(/[^\p{L}\p{N}\s-]+/gu, "") // Remove all non-letter, non-number characters except spaces and dashes

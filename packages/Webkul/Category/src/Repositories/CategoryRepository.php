@@ -71,6 +71,12 @@ class CategoryRepository extends Repository
      */
     public function create(array $data)
     {
+        // Set url_path for translations
+        $parent = null;
+        if (isset($data['parent_id'])) {
+            $parent = $this->model->find($data['parent_id']);
+        }
+
         if (
             isset($data['locale'])
             && $data['locale'] == 'all'
@@ -81,10 +87,32 @@ class CategoryRepository extends Repository
                 foreach ($model->translatedAttributes as $attribute) {
                     if (isset($data[$attribute])) {
                         $data[$locale->code][$attribute] = $data[$attribute];
-
-                        $data[$locale->code]['locale_id'] = $locale->id;
                     }
                 }
+                $data[$locale->code]['locale_id'] = $locale->id;
+
+                if (empty($data[$locale->code]['slug'])) {
+                    $data[$locale->code]['slug'] = $this->generateUniqueSlug($data[$locale->code]['name'] ?? 'n-a', null, $locale->code);
+                }
+
+                if ($parent) {
+                    $parentTranslation = $parent->translate($locale->code);
+                    $data[$locale->code]['url_path'] = $parentTranslation ? ($parentTranslation->url_path . '/' . $data[$locale->code]['slug']) : $data[$locale->code]['slug'];
+                } else {
+                    $data[$locale->code]['url_path'] = $data[$locale->code]['slug'];
+                }
+            }
+        } else {
+            $localeCode = $data['locale'] ?? app()->getLocale();
+            if (empty($data[$localeCode]['slug'])) {
+                $data[$localeCode]['slug'] = $this->generateUniqueSlug($data[$localeCode]['name'] ?? 'n-a', null, $localeCode);
+            }
+
+            if ($parent) {
+                $parentTranslation = $parent->translate($localeCode);
+                $data[$localeCode]['url_path'] = $parentTranslation ? ($parentTranslation->url_path . '/' . $data[$localeCode]['slug']) : $data[$localeCode]['slug'];
+            } else {
+                $data[$localeCode]['url_path'] = $data[$localeCode]['slug'];
             }
         }
 
@@ -99,6 +127,29 @@ class CategoryRepository extends Repository
         }
 
         return $category;
+    }
+
+    /**
+     * Generate a unique slug for the category.
+     */
+    protected function generateUniqueSlug(string $name, ?int $categoryId, string $localeCode): string
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+
+        $query = CategoryTranslationProxy::modelClass()::where('slug', $slug)
+            ->where('locale', $localeCode); // Ensure uniqueness per locale
+
+        if ($categoryId) {
+            $query->where('category_id', '<>', $categoryId);
+        }
+
+        while ($query->where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
+        return $slug;
     }
 
     /**

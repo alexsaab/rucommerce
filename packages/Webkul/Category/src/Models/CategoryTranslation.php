@@ -28,6 +28,7 @@ class CategoryTranslation extends Model implements CategoryTranslationContract
         'name',
         'description',
         'slug',
+        'url_path',
         'meta_title',
         'meta_description',
         'meta_keywords',

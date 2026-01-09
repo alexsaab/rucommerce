@@ -981,6 +981,7 @@ abstract class AbstractType
                 ->orWhereNull('customer_group_id');
         })
             ->where('qty', '>', 1)
+            ->select('qty', DB::raw('MIN(value) as value'))
             ->groupBy('qty')
             ->orderBy('qty')
             ->get();
